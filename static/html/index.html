@@ -3,11 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/def.css">
     <title>Electron</title>
 </head>
 <body>
     <h1>Hello World</h1>
+    <div id="sidebar">
+        <button onclick="updateSidebar()">Reload</button>
+    </div>
+    <div class="container">
+        <ul id="titles">
+            <li>Click the button</li>
+        </ul>
+        <div id="content" contenteditable="true">Select a title</div>
+    </div>
     
+    <script src="../js/index.js"></script>
     <script>
         
     </script>

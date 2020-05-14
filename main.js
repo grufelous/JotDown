@@ -10,7 +10,7 @@ process.env.NODE_ENV = 'development';
 function createMainWindow() {
     let win = new BrowserWindow({
         webPreferences: {
-            // nodeIntegration: true,       // for requiring electron in renderer
+            nodeIntegration: true,       // for requiring electron in renderer
         }
     });
     win.loadURL(url.format({
