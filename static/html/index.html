@@ -7,5 +7,22 @@
 </head>
 <body>
     <h1>Hello World</h1>
+    <p>IPC Test</p>
+    
+    <button onclick="dummyIPC()">Click me</button>
+    
+    <script>
+        function dummyIPC() {
+            console.log("Clicked");
+            console.log(require('electron').remote.getGlobal('someObject'));
+            require('electron').remote.getGlobal('someObject').someProp = "XD";
+        }
+        
+        function dummy
+        
+        window.sessionStorage
+        
+        document.onload = dummyIPC();
+    </script>
 </body>
 </html>

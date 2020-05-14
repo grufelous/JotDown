@@ -4,8 +4,15 @@ const path = require('path');
 
 const {app, BrowserWindow, Menu} = require('electron');
 
+process.env.NODE_ENV = 'development';
+
+// Set main windows
 function createMainWindow() {
-    let win = new BrowserWindow({});
+    let win = new BrowserWindow({
+        webPreferences: {
+            // nodeIntegration: true,       // for requiring electron in renderer
+        }
+    });
     win.loadURL(url.format({
         pathname: path.join(__dirname, 'static/html/index.html'),
         protocol: 'file:',
@@ -18,6 +25,10 @@ function createMainWindow() {
     
 }
 
+global.someObject = {
+    someProp: 'some value',
+}
+
 // Create the main window
 app.on('ready', createMainWindow);
 
@@ -26,17 +37,17 @@ app.on('window-all-closed', () => {
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== 'darwin') {
-        app.quit()
+        app.quit();
     }
-})
+});
 
 app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow()
+        createWindow();
     }
-})
+});
 
 const mainMenuTemplate = [
     {
@@ -52,3 +63,21 @@ const mainMenuTemplate = [
         ]
     }
 ]
+// Set development menu
+if(process.env.NODE_ENV !== 'production') {
+    mainMenuTemplate.push({
+        label: 'DevTools',
+        submenu: [
+            {
+                label: 'Toggle DevTools',
+                accelerator: process.platform=='darwin' ? 'Command+I' : 'Ctrl+I',
+                click(item, focusedWindow) {
+                    focusedWindow.toggleDevTools();
+                } 
+            },
+            {
+                role: 'reload'
+            }
+        ]
+    })
+}
