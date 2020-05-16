@@ -8,19 +8,24 @@
 </head>
 <body>
     <h1>Hello World</h1>
-    <div id="sidebar">
-        <button onclick="updateSidebar()">Reload</button>
-    </div>
     <div class="container">
-        <ul id="titles">
-            <li>Click the button</li>
-        </ul>
+        <div id="sidebar">
+            <button onclick="updateSidebar()">Reload</button>
+            <button onclick="showNameForm()">New File</button>
+            <form id="fileNameForm" action="">
+                <input type="text" name="" id="fileInput">
+                <input type="submit" value="fileSubmit">
+            </form>
+            <ul id="titles">
+                <li>Click the button</li>
+            </ul>
+        </div>
         <div id="content" contenteditable="true">Select a title</div>
     </div>
     
     <script src="../js/index.js"></script>
     <script>
-        
+        document.onload = updateSidebar();
     </script>
 </body>
 </html>

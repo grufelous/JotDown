@@ -1,0 +1,12 @@
+.container {
+    display: flex;
+}
+#sidebar {
+    flex-grow: 1;
+}
+#content {
+    flex-grow: 4;
+}
+#fileNameForm {
+    display: none;
+}

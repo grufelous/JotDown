@@ -97,7 +97,10 @@ if(process.env.NODE_ENV !== 'production') {
     })
 }
 
-// 
+// function listFiles() {
+    
+// }
+// File IPC events received
 ipcMain.on('file:list', (event, args) => {
     let names = [];
     console.log("Received on main with arg: " + args);
@@ -107,4 +110,19 @@ ipcMain.on('file:list', (event, args) => {
     });
     console.log("Got files on main: " + names);
     event.sender.send('file:listSuccess', names);
+});
+ipcMain.on('file:new', (event, args) => {
+    console.log("Received on main with arg: " + args);
+    let filePath = path.join(__dirname, 'data');
+    filePath = path.join(filePath, args);
+    console.log("Location needed: " + filePath);
+    
+    fs.writeFile(filePath, "", function(err) {
+        if(err) {
+            console.log("Error in writing file: " + err);
+            throw err;
+        }
+        console.log("Successfully created the file");
+        event.sender.send('file:listAddSingular', args);
+    });
 });
