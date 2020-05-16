@@ -1,8 +1,9 @@
 const electron = require('electron');
 const url = require('url');
 const path = require('path');
+const fs = require('fs');
 
-const {app, BrowserWindow, Menu} = require('electron');
+const {app, BrowserWindow, Menu, ipcMain} = require('electron');
 
 process.env.NODE_ENV = 'development';
 
@@ -10,7 +11,7 @@ process.env.NODE_ENV = 'development';
 function createMainWindow() {
     let win = new BrowserWindow({
         webPreferences: {
-            nodeIntegration: true,       // for requiring electron in renderer
+            nodeIntegration: true,       // for requiring electron/ipcRenderer in renderer
         }
     });
     win.loadURL(url.format({
@@ -49,6 +50,7 @@ app.on('activate', () => {
     }
 });
 
+// Main menu template
 const mainMenuTemplate = [
     {
         label: 'File',
@@ -61,9 +63,22 @@ const mainMenuTemplate = [
                 }
             }
         ]
+    },
+    {
+        label: 'Edit',
+        role: 'editMenu'
+    },
+    {
+        label: 'View',
+        role: 'viewMenu',
+    },
+    {
+        label: 'Window',
+        role: 'windowMenu',
     }
 ]
-// Set development menu
+
+// Set development menu in non-production
 if(process.env.NODE_ENV !== 'production') {
     mainMenuTemplate.push({
         label: 'DevTools',
@@ -81,3 +96,15 @@ if(process.env.NODE_ENV !== 'production') {
         ]
     })
 }
+
+// 
+ipcMain.on('file:list', (event, args) => {
+    let names = [];
+    console.log("Received on main with arg: " + args);
+    fs.readdirSync('./data').forEach((fileName, i) => {
+        // console.log(fileName);
+        names.push(fileName);
+    });
+    console.log("Got files on main: " + names);
+    event.sender.send('file:listSuccess', names);
+});

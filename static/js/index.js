@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const {ipcRenderer} = require('electron')
 
 function getFileNames() {
     let names = [];
@@ -10,8 +11,9 @@ function getFileNames() {
     return names;
 }
 
-function updateSidebar() {
-    let fileNames = getFileNames();
+ipcRenderer.on('file:listSuccess', (event, args) => {
+    console.log("Received on renderer: " + args);
+    let fileNames = args;
     let titlesList = document.getElementById('titles');
     let editSpace = document.getElementById('content');
     titlesList.innerHTML = "";
@@ -30,4 +32,9 @@ function updateSidebar() {
         });
         titlesList.appendChild(listElt);
     })
+});
+function updateSidebar() {
+    // let fileNames = getFileNames();
+    ipcRenderer.send('file:list', "Get files pls");
+    
 }
