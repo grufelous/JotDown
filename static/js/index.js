@@ -5,7 +5,29 @@ const {ipcRenderer} = require('electron')
 let fileNames = [];
 let fileNameForm = document.getElementById('fileNameForm');
 let titlesList = document.getElementById('titles');
-let editSpace = document.getElementById('content');
+let editSpace = document.getElementById('contentDisplay');
+let fileEditBtn = document.getElementById('fileSaveBtn');
+
+fileEditBtn.addEventListener('click', function() {
+    // @TODO: add save functionality
+})
+editSpace.addEventListener('keydown', function() {
+    console.log(fileEditBtn.attributes.getNamedItem('disabled'));
+    
+    fileEditBtn.removeAttribute('disabled');
+})
+
+// editSpace.onkeyup = e => {
+//     console.log("Content changed!");
+//     if(!document.title.endsWith('*')) {
+//         document.title += '*';
+//     }
+//     console.log(e.target);
+//     ipcRenderer.send('file:needSave', {
+//         content: e.target.innerText
+        
+//     });
+// }
 
 ipcRenderer.on('file:listSuccess', (event, args) => {
     console.log("Received on renderer: " + args);
@@ -53,16 +75,6 @@ function updateSidebar() {
 function showNameForm() {
     fileNameForm.style.display = 'block';
     
-}
-function createNewFile(newFileName) {
-    // alert("Enter new file name: ");
-    // var fileName = "X";
-    // if(fileName != null) {
-    //     console.log("Renderer received file name as " + fileName);
-    //     ipcRenderer.send('file:new', fileName);
-    // } else {
-    //     alert("Invalid file name");
-    // }
 }
 fileNameForm.addEventListener('submit', function(e) {
     e.preventDefault();
