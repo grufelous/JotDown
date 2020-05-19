@@ -10,10 +10,31 @@ process.env.NODE_ENV = 'development';
 // Set main windows
 function createMainWindow() {
     let win = new BrowserWindow({
+        width: 960,
+        height: 600,
         webPreferences: {
             nodeIntegration: true,       // for requiring electron/ipcRenderer in renderer
         }
     });
+    win.on('closed', function() {
+        app.quit();
+    });
+    if(process.env.NODE_ENV != 'production') {
+        let devToolsWin = new BrowserWindow({
+            width: 340,
+            height: 600,
+        });
+        win.webContents.setDevToolsWebContents(devToolsWin.webContents);
+        win.webContents.openDevTools({mode: 'detach'})
+        win.webContents.once('did-finish-load', function () {   
+            let windowBounds = win.getBounds();  
+            devToolsWin.setPosition(windowBounds.x + windowBounds.width, windowBounds.y);
+        });
+    }
+    // win.on('move', function () { 
+    //     let windowBounds = win.getBounds();
+    //     devToolsWin.setPosition(windowBounds.x + windowBounds.width, windowBounds.y);
+    // });
     win.loadURL(url.format({
         pathname: path.join(__dirname, 'static/html/index.html'),
         protocol: 'file:',
