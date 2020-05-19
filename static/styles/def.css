@@ -3,16 +3,18 @@
     justify-content: space-between;
 }
 #sidebar {
-    flex-grow: 1;
+    flex: 1 0 160px;
     padding-right: 2em;
     border-right: solid 1px #000;
 }
 #content {
-    flex-grow: 4;
-    
-    /* padding-left: 2em; */
-    padding: 2em 1em 0 0;
+    flex: 5 0 600px;
+    margin: 1em 2em;
+    padding: 1em;
     margin: 0 0 0 0;
+}
+#contentDisplay {
+    margin: 0 5em 0 2em;
 }
 #fileNameForm {
     display: none;

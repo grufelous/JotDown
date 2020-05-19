@@ -12,8 +12,6 @@ fileEditBtn.addEventListener('click', function() {
     // @TODO: add save functionality
 })
 editSpace.addEventListener('keydown', function() {
-    console.log(fileEditBtn.attributes.getNamedItem('disabled'));
-    
     fileEditBtn.removeAttribute('disabled');
 })
 
@@ -62,19 +60,27 @@ ipcRenderer.on('file:listAddSingular', (event, args) => {
         listElt.addEventListener('click', function(e) {
             // @TODO: will it be wise to use IPC for reading large files on main and receiving here?
             fs.readFile('./data/' + args, function(err, data) {
-                if(err)
+                if(err) {
+                    console.log("Error while reading file: " + err);
                     throw err;
+                }
                 editSpace.innerHTML = data;
+                // Nothing works post this - @TODo fix!
+                console.log(editSpace.innerHTML);
+                alert("Clicked");
+                // editSpace.attributes.setNamedItem('location', args);
+                // alert(editSpace.attributes.getNamedItem('location'));
+                // console.log("Set location attribute as: " + editSpace.attributes.getNamedItem('location'));
             });
+                
         });
         titlesList.appendChild(listElt);
 });
 function updateSidebar() {
     ipcRenderer.send('file:list', "");
 }
-function showNameForm() {
-    fileNameForm.style.display = 'block';
-    
+function toggleNameForm() {
+    (fileNameForm.style.display == 'block') ? fileNameForm.style.display = 'none' : fileNameForm.style.display = 'block';
 }
 fileNameForm.addEventListener('submit', function(e) {
     e.preventDefault();
@@ -93,4 +99,5 @@ fileNameForm.addEventListener('submit', function(e) {
     if(newFileName != null) {
         ipcRenderer.send('file:new', newFileName);
     }
+    fileNameForm.style.display = 'none';
 })
