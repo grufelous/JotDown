@@ -7,42 +7,27 @@ let fileNames = [];
 let fileNameForm = document.getElementById('fileNameForm');
 let titlesList = document.getElementById('titles');
 let editSpace = document.getElementById('contentDisplay');
-let fileEditBtn = document.getElementById('fileSaveBtn');
+let fileSaveBtn = document.getElementById('fileSaveBtn');
+let fileTitleLabel = document.getElementById('fileTitle');
 
-fileEditBtn.addEventListener('click', function() {
-    // @TODO: add save functionality
+fileSaveBtn.addEventListener('click', function() {
+    let fileName = fileTitleLabel.innerText + '.md';
+    let fileContent = editSpace.value;
+    let fileData = {
+        'name': fileName,
+        'content': fileContent
+    }
+    console.log(fileData);
+    ipcRenderer.send('file:save', fileData);
+    fileSaveBtn.setAttribute('disabled', 'true');
 })
 editSpace.addEventListener('keydown', function() {
-    fileEditBtn.removeAttribute('disabled');
+    fileSaveBtn.textContent = "Save";
+    fileSaveBtn.removeAttribute('disabled');
 })
 
-// editSpace.onkeyup = e => {
-//     console.log("Content changed!");
-//     if(!document.title.endsWith('*')) {
-//         document.title += '*';
-//     }
-//     console.log(e.target);
-//     ipcRenderer.send('file:needSave', {
-//         content: e.target.innerText
-        
-//     });
-// }
-
 function appendAllToList() {
-    fileNames.forEach(fileName => {
-        console.log("Adding file in fileNames list to sidebar: " + fileName);
-        listElt = document.createElement('li');
-        fileTitle = document.createTextNode(`${fileName.split('.')[0]}`);
-        listElt.appendChild(fileTitle);
-        listElt.addEventListener('click', function(e) {
-            fs.readFile('./data/' + fileName, function(err, data) {
-                if(err)
-                    throw err;
-                editSpace.innerText = data;
-            });
-        });
-        titlesList.appendChild(listElt);
-    });
+    fileNames.forEach(fileName => appendSingleToList(fileName));
 }
 
 function appendSingleToList(fileName) {
@@ -51,11 +36,14 @@ function appendSingleToList(fileName) {
     fileTitle = document.createTextNode(`${fileName.split('.')[0]}`);
     listElt.appendChild(fileTitle);
     listElt.addEventListener('click', function(e) {
+        fileSaveBtn.textContent = "Save";
         fs.readFile('./data/' + fileName, function(err, data) {
             if(err)
                 throw err;
             editSpace.innerText = data;
         });
+        console.log("Clicked on " + fileName);
+        fileTitleLabel.innerText = fileName.split('.')[0];
     });
     titlesList.appendChild(listElt);
 }
@@ -68,47 +56,14 @@ ipcRenderer.on('file:listSuccess', (event, args) => {
     titlesList.innerHTML = "";
     
     appendAllToList();
-    // fileNames.forEach(titleName => {
-    //     console.log("Adding file: " + titleName);
-    //     listElt = document.createElement("li");
-    //     fileText = document.createTextNode(`${titleName.split('.')[0]}`);
-    //     listElt.appendChild(fileText);
-    //     listElt.addEventListener('click', function(e) {
-    //         // @TODO: will it be wise to use IPC for reading large files on main and receiving here?
-    //         fs.readFile('./data/' + titleName, function(err, data) {
-    //             if(err)
-    //                 throw err;
-    //             editSpace.innerHTML = data;
-    //         });
-    //     });
-    //     titlesList.appendChild(listElt);
-    // })
 });
 ipcRenderer.on('file:listAddSingular', (event, args) => {
     console.log("Renderer received single file to add to list " + args);
     fileNames.push(args);
     appendSingleToList(args);
-    // listElt = document.createElement("li");
-    // fileText = document.createTextNode(`${args.split('.')[0]}`);
-    // listElt.appendChild(fileText);
-    // listElt.addEventListener('click', function(e) {
-    //     console.log(e);
-    //     console.log("Clicked file: " + args);
-    //     // @TODO: will it be wise to use IPC for reading large files on main and receiving here?
-    //     fs.readFile('./data/' + args, function(err, data) {
-    //         if(err) {
-    //             console.log("Error while reading file: " + err);
-    //             throw err;
-    //         }
-    //         editSpace.innerText = data;
-    //         // Nothing works post this - @TODo fix!
-    //         console.log(editSpace.innerHTML);
-    //         alert("Clicked");
-    //         // editSpace.attributes.setNamedItem('location', args);
-    //         // alert(editSpace.attributes.getNamedItem('location'));
-    //         // console.log("Set location attribute as: " + editSpace.attributes.getNamedItem('location'));
-    //     });
-    //     titlesList.appendChild(listElt);
+});
+ipcRenderer.on('file:saveSuccess', (event, args) => {
+    fileSaveBtn.textContent = "Saved";
 });
 function updateSidebar() {
     ipcRenderer.send('file:list', "");

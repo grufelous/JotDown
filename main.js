@@ -147,3 +147,17 @@ ipcMain.on('file:new', (event, args) => {
         event.sender.send('file:listAddSingular', args);
     });
 });
+ipcMain.on('file:save', (event, args) => {
+    console.log("Received on main with arg: " + JSON.stringify(args));
+    let filePath = path.join(__dirname, 'data');
+    filePath = path.join(filePath, args.name);
+    console.log(filePath);
+    fs.writeFile(filePath, args.content, function(err) {
+        if(err) {
+            console.log("Error in writing file: " + err);
+            throw err;
+        }
+        console.log("Successfully saved the file");
+        event.sender.send('file:saveSuccess', args.name);
+    });
+});
