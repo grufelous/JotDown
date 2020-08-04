@@ -26,8 +26,8 @@ function createMainWindow() {
         });
         win.webContents.setDevToolsWebContents(devToolsWin.webContents);
         win.webContents.openDevTools({mode: 'detach'})
-        win.webContents.once('did-finish-load', function () {   
-            let windowBounds = win.getBounds();  
+        win.webContents.once('did-finish-load', function () {
+            let windowBounds = win.getBounds();
             devToolsWin.setPosition(windowBounds.x + windowBounds.width, windowBounds.y);
         });
     }
@@ -127,9 +127,11 @@ ipcMain.on('file:list', (event, args) => {
     console.log("Received on main with arg: " + args);
     fs.readdirSync('./data').forEach((fileName, i) => {
         // console.log(fileName);
-        names.push(fileName);
+        if(path.extname(fileName) == ".md") {
+            names.push(fileName);
+        }
     });
-    console.log("Got files on main: " + names);
+    console.log("Got files on main: " + names + "\nSending these files to renderer");
     event.sender.send('file:listSuccess', names);
 });
 ipcMain.on('file:new', (event, args) => {
@@ -159,5 +161,19 @@ ipcMain.on('file:save', (event, args) => {
         }
         console.log("Successfully saved the file");
         event.sender.send('file:saveSuccess', args.name);
+    });
+});
+ipcMain.on('config:save', (event, args) => {
+    console.log("Received config on main with arg: " + JSON.stringify(args));
+    let filePath = path.join(__dirname, 'data');
+    filePath = path.join(filePath, args.name);
+    console.log(filePath);
+    fs.writeFile(filePath, JSON.stringify(args.content), function(err) {
+        if(err) {
+            console.log("Error in writing config file: " + err);
+            throw err;
+        }
+        console.log("Successfully saved the config file");
+        // event.sender.send('file:saveSuccess', args.name);
     });
 });

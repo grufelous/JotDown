@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../styles/def.css">
-    <title>Electron</title>
+    <title>JotDown</title>
 </head>
 <body>
     <h1>Hello World</h1>
@@ -12,7 +12,7 @@
         <div id="sidebar">
             <button onclick="updateSidebar()">Reload</button>
             <button onclick="toggleNameForm()">New File</button>
-            <button onclick="scanNetworks()">Scan</button>
+            <button onclick="scanSSID()">Scan</button>
             <form id="fileNameForm" action="">
                 <input type="text" name="" id="fileInput">
                 <input type="submit" value="fileSubmit">
@@ -21,17 +21,23 @@
                 <li>Click the button</li>
             </ul>
         </div>
-        <div id="content" contenteditable="true">
-            <p id="fileTitle">Select a file from the sidebar</p>
+        <div id="content">
+            <p>Select a file from the sidebar</p>
+            <p id="fileTitle">Title</p>
             <textarea id="contentDisplay" rows="24" cols="56"></textarea>
-            
+            <div>
+                <label for="wifi">WiFi: </label>
+                <select name="wifi" id="ssid-picker">
+                    <option value="no-select">None</option>
+                </select>
+            </div>
             <button id="fileSaveBtn" disabled>Save</button>
         </div>
     </div>
     
     <script src="../js/index.js"></script>
     <script>
-        document.onload = updateSidebar();
+        document.onload = pageRendered();
     </script>
 </body>
 </html>

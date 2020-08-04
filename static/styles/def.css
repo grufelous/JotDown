@@ -1,20 +1,27 @@
 .container {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
 }
 #sidebar {
-    flex: 1 0 160px;
+    /* flex: 1 0 160px; */
+    order: 1;
     padding-right: 2em;
+    width: 12em;
     border-right: solid 1px #000;
 }
 #content {
-    flex: 5 0 600px;
+    /* flex: 5 0 600px; */
+    order: 2;
     margin: 1em 2em;
-    padding: 1em;
+    width: calc(100% - 18em);
     margin: 0 0 0 0;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
 }
 #contentDisplay {
-    margin: 0 5em 0 2em;
+    margin: 0;
 }
 #fileNameForm {
     display: none;
