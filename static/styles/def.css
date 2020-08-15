@@ -28,14 +28,20 @@ body {
 }
 .sidebar-fn {
     display: flex;
+    flex-direction: column;
     margin-top: auto;
     background: #787878;
     padding: 0.5em;
     height: 4em;
 }
 .sidebar-form {
-    position: absolute;
-    /* display: none; */
+    display: block;
+}
+#add-note-input {
+    width: 12em;
+}
+.sidebar-btns {
+    display: flex;
 }
 .note-display {
     display: flex;
