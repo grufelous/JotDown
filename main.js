@@ -19,11 +19,12 @@ function createMainWindow() {
     win.on('closed', function() {
         app.quit();
     });
+    let devToolsWin = new BrowserWindow({
+        width: 340,
+        height: 600,
+    });
     if(process.env.NODE_ENV != 'production') {
-        let devToolsWin = new BrowserWindow({
-            width: 340,
-            height: 600,
-        });
+        
         win.webContents.setDevToolsWebContents(devToolsWin.webContents);
         win.webContents.openDevTools({mode: 'detach'})
         win.webContents.once('did-finish-load', function () {
@@ -31,10 +32,10 @@ function createMainWindow() {
             devToolsWin.setPosition(windowBounds.x + windowBounds.width, windowBounds.y);
         });
     }
-    // win.on('move', function () { 
-    //     let windowBounds = win.getBounds();
-    //     devToolsWin.setPosition(windowBounds.x + windowBounds.width, windowBounds.y);
-    // });
+    win.on('move', function () { 
+        let windowBounds = win.getBounds();
+        devToolsWin.setPosition(windowBounds.x + windowBounds.width, windowBounds.y);
+    });
     win.loadURL(url.format({
         pathname: path.join(__dirname, 'static/html/index.html'),
         protocol: 'file:',
@@ -118,11 +119,8 @@ if(process.env.NODE_ENV !== 'production') {
     })
 }
 
-// function listFiles() {
-    
-// }
 // File IPC events received
-ipcMain.on('file:list', (event, args) => {
+/*ipcMain.on('file:list', (event, args) => {
     let names = [];
     console.log("Received on main with arg: " + args);
     fs.readdirSync('./data').forEach((fileName, i) => {
@@ -176,4 +174,4 @@ ipcMain.on('config:save', (event, args) => {
         console.log("Successfully saved the config file");
         // event.sender.send('file:saveSuccess', args.name);
     });
-});
+});*/
