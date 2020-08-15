@@ -27,8 +27,15 @@ body {
     overflow-y: scroll;
 }
 .sidebar-fn {
+    display: flex;
     margin-top: auto;
     background: #787878;
+    padding: 0.5em;
+    height: 4em;
+}
+.sidebar-form {
+    position: absolute;
+    /* display: none; */
 }
 .note-display {
     display: flex;
@@ -70,10 +77,4 @@ body {
 }
 .debug {
     border: 1px dotted darkblue;
-}
-#contentDisplay {
-    
-}
-#fileNameForm {
-    
 }

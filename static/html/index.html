@@ -49,8 +49,18 @@
                         <li>Abc</li>
                     </ul>
                 </div>
+                
                 <div class="sidebar-fn">
-                    X
+                    <div class="sidebar-form">
+                        <form action="" id="add-note-form">
+                            <input type="text" name="" id="add-note-input">
+                            <input id='add-note-submit' type="submit" value="Y">
+                            <button id='add-note-discard'>N</button>
+                        </form>
+                    </div>
+                    <button onclick="toggleAddNote()">
+                        Add Note
+                    </button>
                 </div>
             </div>
             
@@ -75,5 +85,6 @@
                 
             </div>
         </div>
+        <script src="../js/index.js"></script>
     </body>
 </html>
