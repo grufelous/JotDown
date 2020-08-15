@@ -18,9 +18,14 @@ function scanSSID() {
 // page functions
 let addNoteForm = document.getElementById('add-note-form')
 const addNoteBtn = document.getElementById('add-note-btn')
+const addNoteInput = document.getElementById('add-note-input')
+addNoteInput.addEventListener('keyup', function(e) {
+    console.log(e.target.value)
+})
 addNoteForm.addEventListener('submit', function(e) {
     e.preventDefault()
     console.log(e.target[0].value)
+    
 })
 function toggleAddNote() {
     if(addNoteForm.style.display=='none') {
