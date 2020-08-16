@@ -134,7 +134,7 @@ ipcMain.on('note:create', (event, newNoteName) => {
     })
     if(!found) {
         const curData = path.join(noteDataPath, newNoteName)
-        fs.mkdir(curData, (err) => {
+        fs.mkdir(curData, {recursive: true}, (err) => {
             if(err) {
                 console.log("Error creating folder on main thread: ", err)
                 event.sender.send('note:create-fail', '')
