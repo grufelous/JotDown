@@ -34,8 +34,8 @@ body {
     padding: 0.5em;
     height: 4em;
 }
-.sidebar-form {
-    display: block;
+#add-note-form {
+    display: none;
 }
 #add-note-input {
     width: 12em;

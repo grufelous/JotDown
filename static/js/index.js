@@ -28,7 +28,7 @@ addNoteForm.addEventListener('submit', function(e) {
     
 })
 function toggleAddNote() {
-    if(addNoteForm.style.display=='none') {
+    if(addNoteForm.style.display!='block') {
         addNoteBtn.textContent='-'
         addNoteForm.style.display='block'
     } else {
