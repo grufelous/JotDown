@@ -73,8 +73,9 @@ ipcRenderer.on('note:create-fail', (event, args) => {
 
 ipcRenderer.on('note:create-success', (event, args) => {
     console.log("Success creation")
-    // const newListItem = document.createElement('li')
-    
-    sidebarNoteList.appendChild(document.createElement('li').appendChild(document.createTextNode(args)))
+    const item = document.createElement('li')
+    const text = document.createTextNode(args)
+    item.appendChild(text)
+    sidebarNoteList.appendChild(item)
     addNoteInput.value = ''
 })
