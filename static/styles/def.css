@@ -46,7 +46,7 @@ body {
 .sidebar-btns {
     display: flex;
 }
-.note-display {
+#note-display {
     display: flex;
     flex-direction: column;
     order: 2;
@@ -65,24 +65,24 @@ body {
     align-items: center;
     justify-content: space-between;
 }
-.note-header {
+#note-header {
     display: flex;
     flex-flow: wrap;
     width: 100%;
     align-items: center;
     justify-content: space-between;
 }
-.note-title {
+#note-title {
     color: #787878;
     font-size: 3em;
 }
-.note-wifi {
+#note-wifi {
     display: flex;
     align-items: center;
     margin: 0 1em;
     margin-left: auto;
 }
-.note-time {
+#note-time {
     display: flex;
     align-items: center;
     margin: 0 1em;

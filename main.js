@@ -120,6 +120,28 @@ if(process.env.NODE_ENV !== 'production') {
     })
 }
 
+ipcMain.on('note:list', (event, args) => {
+    console.log("Reading notes to list")
+    try {
+        fs.readdir(noteDataPath, (err, files) => {
+            if(err) {
+                console.log("Error while reading note files")
+            } else {
+                let noteList = []
+                files.forEach((file) => {
+                    noteList.push(file)
+                })
+                event.sender.send('note:loaded', noteList)
+            }
+        })
+    } catch (err) {
+        if(err.code=='ENOENT') {
+            fs.mkdirSync(noteDataPath, {recursive: true})
+        } else {
+            console.log("Error while loading note files: ", err)
+        }
+    }
+})
 ipcMain.on('note:create', (event, newNoteName) => {
     console.log("Creating note: ", newNoteName)
     let found = false
@@ -133,10 +155,11 @@ ipcMain.on('note:create', (event, newNoteName) => {
                 return
             }
         })
-    } catch (error) {
-        if(error.code=='ENOENT') {
+    } catch (err) {
+        if(err.code=='ENOENT') {
             fs.mkdirSync(noteDataPath, {recursive: true})
         } else {
+            console.log("Error while creating note files: ", err)
             event.sender.send('note:create-fail', '')
         }
     }
@@ -155,6 +178,19 @@ ipcMain.on('note:create', (event, newNoteName) => {
         })
         
     }
+})
+ipcMain.on('note:read', (event, noteName) => {
+    const noteDir = path.join(noteDataPath, noteName)
+    console.log("Reading on main: ", noteName)
+    fs.readFile(path.join(noteDir, 'note.md'), 'utf8', (err, data) => {
+        if(err) {
+            console.log("Error reading folder on main thread: ", err)
+        } else {
+            console.log(data)
+            event.sender.send('note:read-success', {'text': data})
+        }
+    })
+    
 })
 
 // File IPC events received

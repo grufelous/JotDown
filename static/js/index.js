@@ -3,8 +3,12 @@ const fs = require('fs')
 const path = require('path')
 
 const noteDataPath = path.join(__dirname, '../../data/notes')
+
+let notesSet = new Set()
+
 // WiFi-specific functions
-var wifi = require("node-wifi")
+var wifi = require('node-wifi')
+
 wifi.init({
     iface: null
 })
@@ -49,6 +53,7 @@ addNoteForm.addEventListener('submit', (e) => {
 })
 function toggleAddNote() {
     addNoteInput.value = ''
+    addNoteInput.style.background = '#fff'
     if(addNoteForm.style.display!='block') {
         addNoteBtn.textContent='-'
         addNoteForm.style.display='block'
@@ -65,17 +70,57 @@ addNoteDiscardBtn.addEventListener('click', (e) => {
     addNoteBtn.textContent='+'
 })
 
+const noteTitle = document.getElementById('note-title')
+const noteWifi = document.getElementById('note-wifi')
+const noteTime = document.getElementById('note-time')
+const noteContent = document.getElementById('note-content')
+
+function createNoteListItem(noteName) {
+    if(notesSet.has(noteName))
+        return
+    notesSet.add(noteName)
+    const item = document.createElement('li')
+    const text = document.createTextNode(noteName)
+    item.addEventListener('click', () => {
+        noteTitle.textContent = noteName
+        ipcRenderer.send('note:read', noteName)
+        noteContent.innerText = 'Reading file...'
+    })
+    item.appendChild(text)
+    sidebarNoteList.appendChild(item)
+}
+
+function pageRendered() {
+    ipcRenderer.send('note:list')
+}
+// IPC functions
 ipcRenderer.on('note:create-fail', (event, args) => {
     console.log("Fail creation")
     addNoteInput.value = ''
-    addNoteInput.style.background = '#a00'
+    addNoteInput.style.background = '#f00'
 })
 
 ipcRenderer.on('note:create-success', (event, args) => {
     console.log("Success creation")
-    const item = document.createElement('li')
-    const text = document.createTextNode(args)
-    item.appendChild(text)
-    sidebarNoteList.appendChild(item)
+    createNoteListItem(args)
     addNoteInput.value = ''
+})
+
+ipcRenderer.on('note:loaded', (event, noteList) => {
+    console.log("Read stored notes")
+    console.log(noteList)
+    noteList.forEach((note) => {
+        console.log(note)
+        createNoteListItem(note)
+    })
+})
+
+ipcRenderer.on('note:read-success', (event, args) => {
+    console.log("Read the clicked note")
+    noteContent.innerText = args.text
+})
+
+ipcRenderer.on('note:read-fail', (event, args) => {
+    console.log("Unable to read given file")
+    noteContent.innerText = 'Read failed!'
 })
