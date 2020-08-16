@@ -55,6 +55,13 @@ body {
     height: 100%;
     overflow: hidden;
 }
+.note-launch {
+    display: flex;
+    font-size: 3em;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+}
 .note-header {
     display: flex;
     flex-flow: wrap;
