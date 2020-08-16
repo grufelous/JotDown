@@ -9,7 +9,7 @@ wifi.init({
     iface: null
 })
 function scanSSID() {
-    wifi.scan(function(err, networks) {
+    wifi.scan((err, networks) => {
         if(err) {
             console.log("WiFi scan error: ", err)
         } else {
@@ -23,11 +23,13 @@ let addNoteForm = document.getElementById('add-note-form')
 const addNoteSubmitBtn = document.getElementById('add-note-submit')
 const addNoteBtn = document.getElementById('add-note-btn')
 const addNoteInput = document.getElementById('add-note-input')
+const sidebarNoteList = document.getElementById('sidebar-list')
 
-addNoteInput.addEventListener('keyup', function(e) {
+addNoteInput.addEventListener('keyup', (e) => {
     if(e.which==13)             //prevent enter key submission
         return false
     console.log(e.target.value)
+    addNoteInput.style.background = '#fff'
     if(e.target.value.length==0) {
         addNoteSubmitBtn.disabled = true
         return
@@ -36,26 +38,14 @@ addNoteInput.addEventListener('keyup', function(e) {
     }
     
 })
-addNoteForm.addEventListener('submit', function(e) {
+addNoteForm.addEventListener('submit', (e) => {
     e.preventDefault()
-    console.log(e.target[0].value)
-    if(e.target[0].value.length==0) {
+    const fileName = e.target[0].value
+    console.log(fileName)
+    if(fileName==0) {
         return
     }
-    fs.readdir(noteDataPath, function(err, files) {
-        if(err) {
-            console.log("File read err in checkExistance: ", err)
-            return
-        }
-        files.forEach(function(f) {
-            if(fs.statSync(path.join(noteDataPath, f)).isDirectory() && f==e.target[0].value) {
-                console.log("Matches existing folder: ", f)
-                e.target[0].value = ''
-                return
-            }
-        })
-    })
-    
+    ipcRenderer.send('note:create', fileName)
 })
 function toggleAddNote() {
     addNoteInput.value = ''
@@ -68,9 +58,23 @@ function toggleAddNote() {
     }
 }
 const addNoteDiscardBtn = document.getElementById('add-note-discard')
-addNoteDiscardBtn.addEventListener('click', function(e) {
+addNoteDiscardBtn.addEventListener('click', (e) => {
     e.preventDefault()
     document.getElementById('add-note-input').innerText = ''
     addNoteForm.style.display='none'
     addNoteBtn.textContent='+'
+})
+
+ipcRenderer.on('note:create-fail', (event, args) => {
+    console.log("Fail creation")
+    addNoteInput.value = ''
+    addNoteInput.style.background = '#a00'
+})
+
+ipcRenderer.on('note:create-success', (event, args) => {
+    console.log("Success creation")
+    // const newListItem = document.createElement('li')
+    
+    sidebarNoteList.appendChild(document.createElement('li').appendChild(document.createTextNode(args)))
+    addNoteInput.value = ''
 })

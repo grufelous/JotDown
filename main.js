@@ -7,6 +7,8 @@ const {app, BrowserWindow, Menu, ipcMain} = require('electron');
 
 process.env.NODE_ENV = 'development';
 
+const noteDataPath = path.join(__dirname, 'data/notes')
+
 // Set main windows
 function createMainWindow() {
     let win = new BrowserWindow({
@@ -24,7 +26,6 @@ function createMainWindow() {
         height: 600,
     });
     if(process.env.NODE_ENV != 'production') {
-        
         win.webContents.setDevToolsWebContents(devToolsWin.webContents);
         win.webContents.openDevTools({mode: 'detach'})
         win.webContents.once('did-finish-load', function () {
@@ -48,9 +49,9 @@ function createMainWindow() {
     
 }
 
-global.someObject = {
-    someProp: 'some value',
-}
+// global.someObject = {
+//     someProp: 'some value',
+// }
 
 // Create the main window
 app.on('ready', createMainWindow);
@@ -118,6 +119,34 @@ if(process.env.NODE_ENV !== 'production') {
         ]
     })
 }
+
+ipcMain.on('note:create', (event, newNoteName) => {
+    console.log("Creating note: ", newNoteName)
+    let found = false
+    fs.readdirSync(noteDataPath).forEach((file, i) => {
+        console.log(file)
+        if(fs.statSync(path.join(noteDataPath, file)).isDirectory() && file==newNoteName) {
+            console.log("Matched")
+            event.sender.send('note:create-fail', '')
+            found = true
+            return
+        }
+    })
+    if(!found) {
+        const curData = path.join(noteDataPath, newNoteName)
+        fs.mkdir(curData, (err) => {
+            if(err) {
+                console.log("Error creating folder on main thread: ", err)
+                event.sender.send('note:create-fail', '')
+            } else {
+                fs.writeFileSync(path.join(curData, 'note.md'), "")
+                fs.writeFileSync(path.join(curData, 'reminders.json'), "")
+                event.sender.send('note:create-success', newNoteName)
+            }
+        })
+        
+    }
+})
 
 // File IPC events received
 /*ipcMain.on('file:list', (event, args) => {
