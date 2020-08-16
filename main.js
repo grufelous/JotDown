@@ -123,15 +123,24 @@ if(process.env.NODE_ENV !== 'production') {
 ipcMain.on('note:create', (event, newNoteName) => {
     console.log("Creating note: ", newNoteName)
     let found = false
-    fs.readdirSync(noteDataPath).forEach((file, i) => {
-        console.log(file)
-        if(fs.statSync(path.join(noteDataPath, file)).isDirectory() && file==newNoteName) {
-            console.log("Matched")
+    try {
+        fs.readdirSync(noteDataPath).forEach((file, i) => {
+            console.log(file)
+            if(fs.statSync(path.join(noteDataPath, file)).isDirectory() && file==newNoteName) {
+                console.log("Matched")
+                event.sender.send('note:create-fail', '')
+                found = true
+                return
+            }
+        })
+    } catch (error) {
+        if(error.code=='ENOENT') {
+            fs.mkdirSync(noteDataPath, {recursive: true})
+        } else {
             event.sender.send('note:create-fail', '')
-            found = true
-            return
         }
-    })
+    }
+    
     if(!found) {
         const curData = path.join(noteDataPath, newNoteName)
         fs.mkdir(curData, {recursive: true}, (err) => {
