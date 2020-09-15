@@ -181,16 +181,31 @@ ipcMain.on('note:create', (event, newNoteName) => {
 })
 ipcMain.on('note:read', (event, noteName) => {
     const noteDir = path.join(noteDataPath, noteName)
-    console.log("Reading on main: ", noteName)
+    console.log("Reading note on main: ", noteName)
     fs.readFile(path.join(noteDir, 'note.md'), 'utf8', (err, data) => {
         if(err) {
             console.log("Error reading folder on main thread: ", err)
+            event.sender.send('note:read-fail')
         } else {
             console.log(data)
             event.sender.send('note:read-success', {'text': data})
         }
     })
     
+})
+ipcMain.on('config:read', (event, noteName) => {
+    const noteDir = path.join(noteDataPath, noteName)
+    console.log("Reading config on main: ", noteName)
+    fs.readFile(path.join(noteDir, 'reminders.json'), (err, data) => {
+        if(err) {
+            console.log("Error reading the reminder config on main: ", err)
+            event.sender.send('config:read-fail')
+        } else {
+            const parsedData = JSON.parse(data)
+            console.log(parsedData)
+            event.sender.send('config:read-success', parsedData)
+        }
+    })
 })
 
 // File IPC events received

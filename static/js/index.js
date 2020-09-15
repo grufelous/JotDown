@@ -28,6 +28,12 @@ const addNoteSubmitBtn = document.getElementById('add-note-submit')
 const addNoteBtn = document.getElementById('add-note-btn')
 const addNoteInput = document.getElementById('add-note-input')
 const sidebarNoteList = document.getElementById('sidebar-list')
+let ssidPicker = document.getElementById('ssid-picker')
+const noteTimeText = document.getElementById('note-time-text')
+
+ssidPicker.addEventListener('click', () => {
+    scanSSID()
+})
 
 addNoteInput.addEventListener('keyup', (e) => {
     if(e.which==13)             //prevent enter key submission
@@ -71,8 +77,8 @@ addNoteDiscardBtn.addEventListener('click', (e) => {
 })
 
 const noteTitle = document.getElementById('note-title')
-const noteWifi = document.getElementById('note-wifi')
-const noteTime = document.getElementById('note-time')
+// const noteWifi = document.getElementById('note-wifi')
+// const noteTime = document.getElementById('note-time')
 const noteContent = document.getElementById('note-content')
 
 function createNoteListItem(noteName) {
@@ -84,6 +90,7 @@ function createNoteListItem(noteName) {
     item.addEventListener('click', () => {
         noteTitle.textContent = noteName
         ipcRenderer.send('note:read', noteName)
+        ipcRenderer.send('config:read', noteName)
         noteContent.innerText = 'Reading file...'
     })
     item.appendChild(text)
@@ -123,4 +130,18 @@ ipcRenderer.on('note:read-success', (event, args) => {
 ipcRenderer.on('note:read-fail', (event, args) => {
     console.log("Unable to read given file")
     noteContent.innerText = 'Read failed!'
+})
+
+ipcRenderer.on('config:read-success', (event, args) => {
+    const curSSID = document.createElement('option')
+    curSSID.text = args['ssid']
+    ssidPicker.add(curSSID)
+    ssidPicker.value = args['ssid']
+    console.log(args['ssid'])
+    noteTimeText.innerText = args['time']
+    
+})
+
+ipcRenderer.on('config:read-fail', () => {
+    
 })
